@@ -1,11 +1,15 @@
 class PrescriptionsController < ApplicationController
-  def new
+  before_action do
     @patient = Patient.find(params[:patient_id])
+  end
+
+  def new
     @prescription = Prescription.new
   end
 
+
+
   def create
-    @patient = Patient.find(params[:patient_id])
     @prescription = Prescription.new(
       allowed_params.merge(:patient => @patient,
                            :prescribed_by => current_user)
@@ -18,6 +22,12 @@ class PrescriptionsController < ApplicationController
       render :new
     end
 
+  end
+
+  def destroy
+    @prescription = @patient.prescriptions.find(params[:id])
+    @prescription.destroy
+    redirect_to patient_path(@patient)
   end
 
   private
